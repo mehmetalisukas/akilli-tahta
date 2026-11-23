@@ -57,4 +57,22 @@ document.getElementById('fs').onclick=fsToggle;
 document.addEventListener('fullscreenchange',fsSend);
 window.addEventListener('message',function(e){if(e.data&&e.data.fsToggle)fsToggle();if(e.data&&e.data.menuHidden!==undefined)document.body.classList.toggle('nobar',!!e.data.menuHidden);});
 [].forEach.call(document.querySelectorAll('.ub'),function(b){b.onclick=function(){openU(+b.dataset.u)}});
+
+/* ---- otomatik güncelleme kontrolü (internet varsa) ---- */
+(function(){
+var V='202611231914',FN='Siyer_6_Sinif_Tum_Uniteler.html',REPO='mehmetalisukas/akilli-tahta',PATH='Siyer/Siyer_6_Sinif_Tum_Uniteler.html';
+function show(){
+ if(document.getElementById('upd'))return;
+ var d=document.createElement('div');d.id='upd';
+ d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:99999;background:#fff7e0;color:#2a1f6e;border:3px solid #e0a43a;border-radius:14px;padding:10px 14px;font:700 14px "Segoe UI",system-ui,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.4);max-width:320px';
+ d.innerHTML='🔄 Bu dosyanın yeni sürümü var.<br><a href="https://raw.githubusercontent.com/'+REPO+'/main/'+PATH+'" download="'+FN+'" style="display:inline-block;margin:8px 8px 0 0;background:#2d2178;color:#fff;padding:6px 12px;border-radius:9px;text-decoration:none">⬇ Yeni sürümü indir</a><button id="updx" style="margin-top:8px;border:0;background:#ddd;border-radius:9px;padding:6px 12px;font:inherit;cursor:pointer">Sonra</button>';
+ document.body.appendChild(d);document.getElementById('updx').onclick=function(){d.remove()};
+}
+try{
+ if(navigator.onLine===false||!window.fetch)return;
+ var c=new AbortController();setTimeout(function(){c.abort()},6000);
+ fetch('https://raw.githubusercontent.com/'+REPO+'/main/version.json?t='+Date.now(),{signal:c.signal,cache:'no-store'})
+  .then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j[PATH]&&j[PATH]>V)show()}).catch(function(){});
+}catch(e){}
+})();
 </script></body></html>
